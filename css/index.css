@@ -1,0 +1,15 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  background: AliceBlue;
+}
+
+li.list-group-item:hover {
+  border-color: Gray;
+}
+
+li {
+  line-height: 2.0;
+}
