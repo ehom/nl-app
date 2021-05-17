@@ -145,19 +145,19 @@ class App extends React.Component {
               Google Cloud NL has identified important entities in this document.
             </div>
             <div className="col-sm-8 bg-white text-center pt-4 pb-1 mb-2">
-              <label for="salience">
+              <div>
                 <input
-                  id="salience"
-                  type="range"
-                  min={this.state.salienceMin}
-                  max={this.state.salienceMax}
-                  value={this.state.salienceIndex}
-                  step="1"
-                  onChange={this.onSalience.bind(this)}
-                  className="form-range"
-                />
-              </label>
-              <span className="badge badge-pill">{this.state.salienceIndex + 1}</span>
+                    id="salience"
+                    type="range"
+                    min={this.state.salienceMin}
+                    max={this.state.salienceMax}
+                    value={this.state.salienceIndex}
+                    step="1"
+                    onChange={this.onSalience.bind(this)}
+                    className="form-range"
+                  />
+              </div>
+              <span className="badge badge-pill badge-info">{this.state.salienceIndex + 1}</span>
             </div>
           </div>
           <div className="mb-3">
