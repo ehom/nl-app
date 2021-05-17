@@ -1,11 +1,5 @@
 const versionString = "0.4";
 
-const EMOJIS = {
-  FACE_WITH_ROLLING_EYES: "\ud83d\ude44",
-  THINKING_FACE: "\ud83e\udd14",
-  FACE_WITH_OPEN_MOUTH: "\ud83d\ude2e"
-};
-
 class App extends React.Component {
   state = {
     original: {},
@@ -169,9 +163,15 @@ class App extends React.Component {
           <div className="mb-3">
             <Sentences sentences={sentences} />
           </div>
-          <div className="container bg-white p-3">
+          <div className="container bg-white p-3 mb-3">
             <p>Entities ({this.state.entities.length})</p>
             <Entities entities={this.state.entities} />
+          </div>
+          <div className="container bg-white p-3">
+            <p>Document Sentiment ({this.state.original.documentSentiment.score})</p>
+            <div className="display-4">
+              <Sentiment score={this.state.original.documentSentiment.score} />
+            </div>
           </div>
         </main>
         <footer className="mb-5">

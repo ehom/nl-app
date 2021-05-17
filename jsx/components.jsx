@@ -14,6 +14,7 @@ function Sentences({ sentences }) {
 
       if (curIndex !== 0) {
         if (slices.length === 0) {
+          console.debug("checkpt 1");
           slices.push({
             text: sentence.text.content.slice(0, curIndex),
             beginOffset: 0,
@@ -21,6 +22,7 @@ function Sentences({ sentences }) {
             isEntity: false
           });
         } else {
+          console.debug("checkpt 2");
           slices.push({
             text: sentence.text.content.slice(
               slices[slices.length - 1].endOffset,
@@ -33,6 +35,7 @@ function Sentences({ sentences }) {
         }
       }
 
+      console.debug("checkpt 3: push entity onto stack");
       slices.push({
         text: sentence.text.content.slice(
           curIndex,
@@ -46,6 +49,8 @@ function Sentences({ sentences }) {
 
     // TODO: Double check this code
     if (slices.length > 0) {
+      console.debug("checkpt 4: push end of sentence on the stack");
+
       slices.push({
         text: sentence.text.content.slice(slices[slices.length - 1].endOffset),
         beginOffset: slices[slices.length - 1].endOffset,
@@ -53,6 +58,7 @@ function Sentences({ sentences }) {
         isEntity: false
       });
     } else {
+      console.debug("checkpt 5: push end of sentence on the stack");
       slices.push({
         text: sentence.text.content,
         beginOffset: 0,
@@ -89,4 +95,22 @@ function Entities({ entities }) {
     </span>
   ));
   return <React.Fragment>{result}</React.Fragment>;
+}
+
+const EMOJIS = {
+  FACE_WITH_ROLLING_EYES: "\ud83d\ude44",
+  THINKING_FACE: "\ud83e\udd14",
+  FACE_WITH_OPEN_MOUTH: "\ud83d\ude2e",
+  NEUTRAL_FACE: "\u{1F610}",
+  FROWN_FACE: "\u{1F641}",
+  HAPPY_FACE: "\u{1F642}"
+};
+
+function Sentiment({ score }) {
+  return (
+    <React.Fragment>
+      {(score > 0.0) ? EMOJIS.HAPPY_FACE :
+       (score < 0.0) ? EMOJIS.FROWN_FACE : EMOJIS.NEUTRAL_FACE}
+    </React.Fragment>
+  );
 }
