@@ -1,3 +1,5 @@
+const versionString = "0.4";
+
 const EMOJIS = {
   FACE_WITH_ROLLING_EYES: "\ud83d\ude44",
   THINKING_FACE: "\ud83e\udd14",
@@ -9,9 +11,10 @@ class App extends React.Component {
     original: {},
     sentences: [],
     entities: [],
-    salienceMin: 0.0,
-    salienceMax: 0.0,
-    salience: 0.01
+    salienceMin: 0,
+    salienceMax: 0,
+    salienceIndex: 0,
+    saliences: []
   };
 
   combine(sentences, entities) {
@@ -67,8 +70,6 @@ class App extends React.Component {
     return sentences;
   }
 
-  isImportant = (entity) => entity.salience >= this.state.salience;
-
   componentDidMount() {
     console.debug("componentDidMount");
 
@@ -77,40 +78,37 @@ class App extends React.Component {
       .then((json) => {
         console.debug(json);
 
+        const saliences = json.entities.map(entity => {
+          return entity.salience;
+        }).sort();
+
+        const salienceMax = saliences.length - 1;
+
         const entities = json.entities.filter((entity) =>
-          this.isImportant(entity)
+          entity.salience >= saliences[salienceMax]
         );
 
         const sentences = this.combine(json.sentences, entities);
-
-        const salienceMax = json.entities.reduce((currentMax, entity) => {
-          return Math.max(currentMax, entity.salience);
-        }, 0.0);
 
         this.setState({
           original: json,
           sentences: sentences,
           entities: entities,
-          salienceMax: salienceMax
+          salienceMax: salienceMax,
+          salienceIndex: salienceMax,
+          saliences: saliences
         });
-
-        document.getElementById(
-          "salience"
-        ).value = this.state.salience.toString();
       });
-  }
-
-  rangeHandler(event) {
-    console.debug("rangeHandler():", event.target.value);
   }
 
   onSalience(event) {
     console.debug("onSalience():", event.target.value);
 
-    // TODO -- Put this in a method so that it can be shared with componentDidMount()
+    const salienceIndex = parseInt(event.target.value);
+    // TODO -- Put this in a method so that it can be shared with componentDidMount()?
 
     const entities = this.state.original.entities.filter((entity) =>
-      this.isImportant(entity)
+       entity.salience >= this.state.saliences[salienceIndex]
     );
 
     const sentences = this.combine(this.state.original.sentences, entities);
@@ -118,7 +116,7 @@ class App extends React.Component {
     this.setState({
       sentences: sentences,
       entities: entities,
-      salience: parseFloat(event.target.value)
+      salienceIndex: salienceIndex
     });
   }
 
@@ -139,31 +137,32 @@ class App extends React.Component {
       EMOJIS.FACE_WITH_OPEN_MOUTH
     ];
     
-    const style = { borderWidth: "1", borderColor: "LightGray", borderStyle: "solid"}
+    const style = { borderWidth: "1", borderColor: "LightGray", borderStyle: "solid", backgroundColor: "#ffffcc"};
 
     return (
       <div className="pb-5 mb-5">
         <nav class="navbar navbar-light bg-light mb-3">
-          <span className="navbar-brand">Entity Recognition</span><span className="text-muted"> 0.3</span>
+          <span className="badge badge-dark">Entity Recognition</span><span className="badge badge-pill badge-dark"> {versionString}</span>
         </nav>
         <main className="container mb-5">
           <div class="row mb-2">
-            <div className="col-sm-6 bg-white text-right p-3 mb-2" style={style}>
+            <div className="col-sm-4 text-right p-3 mb-2" style={style}>
               Google Cloud NL has identified important entities in this document.
             </div>
-            <div className="col-sm-6 bg-white text-center pt-4 pb-1 mb-2">
+            <div className="col-sm-8 bg-white text-center pt-4 pb-1 mb-2">
               <label for="salience">
                 <input
                   id="salience"
                   type="range"
                   min={this.state.salienceMin}
                   max={this.state.salienceMax}
-                  value={this.state.salience}
-                  step="0.001"
+                  value={this.state.salienceIndex}
+                  step="1"
                   onChange={this.onSalience.bind(this)}
                   className="form-range"
                 />
               </label>
+              <span className="badge badge-pill">{this.state.salienceIndex + 1}</span>
             </div>
           </div>
           <div className="mb-3">
