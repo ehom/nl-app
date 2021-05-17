@@ -199,15 +199,10 @@ class App extends React.Component {
   }
 }
 
-const DEFAULT_URL =
-  "https://raw.githubusercontent.com/ehom/nl-api-demo/main/result.json";
+App.defaultProps = {
+  url: "https://raw.githubusercontent.com/ehom/nl-api-demo/main/result.json"
+};
 
-let url = DEFAULT_URL;
 const urlParams = new URLSearchParams(window.location.search);
 
-if (urlParams.has("url")) {
-  url = urlParams.get("url");
-  console.debug("url:", url);
-}
-
-ReactDOM.render(<App url={url} />, document.getElementById("root"));
+ReactDOM.render(<App url={ urlParams.has('url') ? urlParams.get("url") : undefined} />, document.getElementById("root"));

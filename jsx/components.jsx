@@ -55,7 +55,7 @@ function Sentences({ sentences }) {
     } else {
       slices.push({
         text: sentence.text.content,
-        begineOffset: 0,
+        beginOffset: 0,
         endOffset: -1,
         isEntity: false
       });
